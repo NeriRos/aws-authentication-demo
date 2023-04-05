@@ -11,29 +11,28 @@ Parameters:
     Description: Domain allowed to use this UserPool
   Postman:
     Type: String
-
+    AllowedValues:
+      - "true"
+      - "false"
 
 Conditions:
-  UsePostman: !Equals
-    - !Ref Postman
-    - "true"
+  UsePostman: !Equals [ !Ref Postman, "true" ]
 
 Resources:
-  # Create a Cognito User pool foruser management
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
       Policies:
         PasswordPolicy:
-          MinimumLength: 8
+          MinimumLength: 6
       AutoVerifiedAttributes:
-        - email
+        - national_id
       UsernameAttributes:
-        - email
+        - national_id
       Schema:
         - AttributeDataType: String
-          Name: email
-          Required: false
+          Name: national_id
+          Required: true
 
   # Create an application for authentication
   UserPoolClient:
