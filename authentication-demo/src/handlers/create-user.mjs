@@ -1,50 +1,64 @@
-// Create clients and set shared const values outside of the handler.
-
-// Create a DocumentClient that represents the query to add an item
 import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
 import {DynamoDBDocumentClient, PutCommand} from '@aws-sdk/lib-dynamodb';
 
 const client = new DynamoDBClient({});
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-// Get the DynamoDB table name from environment variables
 const tableName = process.env.USERS_TABLE;
 
-/**
- * A simple example includes a HTTP post method to add one item to a DynamoDB table.
- */
 export const createUserHandler = async (event) => {
     if (event.httpMethod !== 'POST') {
         throw new Error(`postMethod only accepts POST method, you tried: ${event.httpMethod} method.`);
     }
-    // All log statements are written to CloudWatch
     console.info('received:', event);
 
-    // Get id and name from the body of the request
     const body = JSON.parse(event.body);
-    const id = body.id;
-    const name = body.name;
 
-    // Creates a new item, or replaces an old item with a new item
-    // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#put-property
-    var params = {
+    const requiredFields = ['first_name', 'last_name', 'phone_number', 'national_id'];
+    const missingFields = requiredFields.filter(field => !(field in body));
+
+    if (missingFields.length) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `Missing fields: ${missingFields.join(', ')}`
+            })
+        }
+    }
+
+    const params = {
         TableName: tableName,
-        Item: {id: id, name: name}
+        Item: {
+            first_name: body.first_name,
+            last_name: body.last_name,
+            phone_number: body.phone_number,
+            national_id: body.national_id
+        }
     };
 
     try {
         const data = await ddbDocClient.send(new PutCommand(params));
         console.log("Success - item added or updated", data);
+
+        const response = {
+            statusCode: 201,
+            body: JSON.stringify({
+                message: `User added successfully`,
+                id: data.id,
+                data
+            })
+        };
+
+        console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+        return response;
     } catch (err) {
-        console.log("Error", err.stack);
+        console.error("Error", err.stack);
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: `Error adding user: ${err.stack}`
+            })
+        }
     }
-
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(body)
-    };
-
-    // All log statements are written to CloudWatch
-    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-    return response;
-};
+}

@@ -68,7 +68,7 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-my-application$ sam local invoke putItemFunction --event events/event-post-item.json
+my-application$ sam local invoke putItemFunction --event events/event-create-user.json
 my-application$ sam local invoke getAllItemsFunction --event events/event-get-all-items.json
 ```
 
