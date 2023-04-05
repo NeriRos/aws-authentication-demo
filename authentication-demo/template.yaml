@@ -1,9 +1,30 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: authentication-demo
+Description: serverless authentication app demo
+
+Parameters:
+  Client:
+    Description: Client website for authentication redirects and cors (must start with https://)
+    Type: String
+    Default: https://localhost:3000
+  TestWithPostman:
+    Description: Do you need to test with Postman? (Not recommended for production)
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
 
 Resources:
-  getByIdFunction:
+  AuthStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./auth.yaml
+      Parameters:
+        ClientDomain: !Ref Client
+        Postman: !Ref TestWithPostman
+
+  getUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/get-user.getUserHandler
@@ -23,6 +44,7 @@ Resources:
         Api:
           Type: Api
           Properties:
+            ApiId: !Ref AppApi
             Path: /user/{id}
             Method: GET
 
@@ -55,6 +77,28 @@ Resources:
       PrimaryKey:
         Name: id
         Type: String
+
+  # Creates an API Gateway HTTP API endpoint with JWT authorization
+  AppApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: Connect Cognito to HTTP API
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+        AllowOrigins:
+          - !Ref Client
+      Auth:
+        Authorizers:
+          JWTAuthorizer:
+            AuthorizationScopes:
+              - email
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer: !GetAtt AuthStack.Outputs.Issuer
+              audience:
+                - !GetAtt AuthStack.Outputs.UserPoolClientId
+        DefaultAuthorizer: JWTAuthorizer
 
 Outputs:
   WebEndpoint:
