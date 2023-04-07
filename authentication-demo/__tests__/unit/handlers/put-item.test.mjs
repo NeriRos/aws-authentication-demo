@@ -1,5 +1,5 @@
-// Import putItemHandler function from create-user.mjs
-import { putItemHandler } from '../../../src/handlers/create-user.mjs';
+// Import putItemHandler function from create-user.js
+import { putItemHandler } from '../../../src/handlers/create-user.js';
 // Import dynamodb from aws-sdk 
 import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from "aws-sdk-client-mock";

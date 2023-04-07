@@ -3,11 +3,12 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
-        <entry key="AWS CloudFormation Serverless Application Model (SAM)">
+        <entry key="AWS CloudFormation Serverless Application Model (SAM) 2">
           <value>
             <SchemaInfo>
-              <option name="name" value="AWS CloudFormation Serverless Application Model (SAM)" />
+              <option name="name" value="AWS CloudFormation Serverless Application Model (SAM) 2" />
               <option name="relativePathToSchema" value="https://raw.githubusercontent.com/aws/serverless-application-model/main/samtranslator/schema/schema.json" />
+              <option name="schemaVersion" value="JSON Schema version 7" />
               <option name="applicationDefined" value="true" />
               <option name="patterns">
                 <list>

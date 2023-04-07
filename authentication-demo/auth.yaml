@@ -26,9 +26,9 @@ Resources:
         PasswordPolicy:
           MinimumLength: 6
       AutoVerifiedAttributes:
-        - national_id
+        - phone_number
       UsernameAttributes:
-        - national_id
+        - phone_number
       Schema:
         - AttributeDataType: String
           Name: national_id

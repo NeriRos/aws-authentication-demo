@@ -25,24 +25,26 @@ export const getUserHandler = async (event) => {
 
     // Get the item from the table
     // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property
-    var params = {
+    let params = {
         TableName: tableName,
         Key: {id: id},
     };
 
     try {
         const data = await ddbDocClient.send(new GetCommand(params));
-        var item = data.Item;
+        let item = data.Item;
+
+        const response = {
+            statusCode: 200,
+            body: JSON.stringify(item)
+        };
+
+        // All log statements are written to CloudWatch
+        console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+        return response;
+
     } catch (err) {
         console.log("Error", err);
     }
 
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(item)
-    };
-
-    // All log statements are written to CloudWatch
-    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-    return response;
 }

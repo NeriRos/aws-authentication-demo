@@ -10,7 +10,7 @@ Parameters:
   TestWithPostman:
     Description: Do you need to test with Postman? (Not recommended for production)
     Type: String
-    Default: "false"
+    Default: "true"
     AllowedValues:
       - "true"
       - "false"
@@ -44,7 +44,6 @@ Resources:
         Api:
           Type: Api
           Properties:
-            ApiId: !Ref AppApi
             Path: /user/{id}
             Method: GET
 
@@ -55,15 +54,7 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
         - x86_64
-      MemorySize: 128
-      Timeout: 100
       Description: Create user in the DynamoDB table.
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref UsersTable
-      Environment:
-        Variables:
-          USERS_TABLE: !Ref UsersTable
       Events:
         Api:
           Type: Api
@@ -78,7 +69,6 @@ Resources:
         Name: id
         Type: String
 
-  # Creates an API Gateway HTTP API endpoint with JWT authorization
   AppApi:
     Type: AWS::Serverless::HttpApi
     Properties:

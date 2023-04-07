@@ -5,14 +5,27 @@
   "private": true,
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.188.0",
-    "@aws-sdk/lib-dynamodb": "^3.188.0"
+    "@aws-sdk/lib-dynamodb": "^3.188.0",
+    "aws-sdk": "^2.1352.0"
   },
   "devDependencies": {
     "aws-sdk-client-mock": "^2.0.0",
     "jest": "^29.2.1"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
+    "dev_create_user": "nodemon -w \"src/handles/create-user.*, events/event-create-user.json\" --exec \"sam build && sam local invoke --debug \\\"createUserFunction\\\" -e events/event-create-user.json\"",
+    "dev_get_user": "nodemon -w \"src/handles/get-user.*, events/event-get-user.json\" --exec \"sam build && sam local invoke --debug \\\"getUserFunction\\\" -e events/event-get-user.json\""
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "node_modules"
+    ],
+    "watch": [
+      "src/**/*.mjs",
+      "src/**/*.js"
+    ],
+    "delay": 2500
   },
   "jest": {
     "testMatch": [
@@ -27,4 +40,3 @@
     ]
   }
 }
-
