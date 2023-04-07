@@ -1,37 +1,24 @@
-// Create clients and set shared const values outside of the handler.
+import AWS from 'aws-sdk';
 
-// Create a DocumentClient that represents the query to add an item
-import {DynamoDBClient} from '@aws-sdk/client-dynamodb';
-import {DynamoDBDocumentClient, GetCommand} from '@aws-sdk/lib-dynamodb';
-
-const client = new DynamoDBClient({});
-const ddbDocClient = DynamoDBDocumentClient.from(client);
-
-// Get the DynamoDB table name from environment variables
+const dynamo = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.USERS_TABLE;
 
-/**
- * A simple example includes a HTTP get method to get one item by id from a DynamoDB table.
- */
 export const getUserHandler = async (event) => {
     if (event.httpMethod !== 'GET') {
         throw new Error(`getMethod only accept GET method, you tried: ${event.httpMethod}`);
     }
     // All log statements are written to CloudWatch
-    console.info('received:', event);
+    console.info('received get user event');
 
-    // Get id from pathParameters from APIGateway because of `/{id}` at template.yaml
     const id = event.pathParameters.id;
 
-    // Get the item from the table
-    // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#get-property
     let params = {
         TableName: tableName,
-        Key: {id: id},
+        Key: {national_id: id},
     };
 
     try {
-        const data = await ddbDocClient.send(new GetCommand(params));
+        const data = await dynamo.get(params).promise();
         let item = data.Item;
 
         const response = {
@@ -45,6 +32,12 @@ export const getUserHandler = async (event) => {
 
     } catch (err) {
         console.log("Error", err);
-    }
 
+        const response = {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: `Error getting user: ${err.stack}`
+            })
+        };
+    }
 }

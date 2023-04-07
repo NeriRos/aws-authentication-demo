@@ -3,26 +3,49 @@ Transform: AWS::Serverless-2016-10-31
 Description: serverless authentication app demo
 
 Parameters:
-  Client:
-    Description: Client website for authentication redirects and cors (must start with https://)
+  ClientDomain:
     Type: String
-    Default: https://localhost:3000
-  TestWithPostman:
-    Description: Do you need to test with Postman? (Not recommended for production)
+    Description: Domain allowed to use this UserPool
+    Default: "https://2zqblfwse0.execute-api.eu-central-1.amazonaws.com"
+  Postman:
     Type: String
     Default: "true"
     AllowedValues:
       - "true"
       - "false"
 
+Conditions:
+  UsePostman: !Equals [ !Ref Postman, "true" ]
+
 Resources:
-  AuthStack:
-    Type: AWS::Serverless::Application
+  UserPool:
+    Type: AWS::Cognito::UserPool
     Properties:
-      Location: ./auth.yaml
-      Parameters:
-        ClientDomain: !Ref Client
-        Postman: !Ref TestWithPostman
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      SupportedIdentityProviders:
+        - COGNITO
+      CallbackURLs:
+        - !Ref ClientDomain
+        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
+      LogoutURLs:
+        - !Ref ClientDomain
+        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+        - !If [ UsePostman, implicit, !Ref AWS::NoValue ] # Implicit is only used for testing with postman and should not be in production.
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
 
   getUserFunction:
     Type: AWS::Serverless::Function
@@ -44,7 +67,7 @@ Resources:
         Api:
           Type: Api
           Properties:
-            Path: /user/{id}
+            Path: /user/{id+}
             Method: GET
 
   createUserFunction:
@@ -55,6 +78,14 @@ Resources:
       Architectures:
         - x86_64
       Description: Create user in the DynamoDB table.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Environment:
+        Variables:
+          CLIENT_POOL_ID: !Ref UserPoolClient
+          USER_POOL_ID: !Ref UserPool
+          USERS_TABLE: !Ref UsersTable
       Events:
         Api:
           Type: Api
@@ -66,8 +97,9 @@ Resources:
     Type: AWS::Serverless::SimpleTable
     Properties:
       PrimaryKey:
-        Name: id
+        Name: national_id
         Type: String
+      TableName: "Users"
 
   AppApi:
     Type: AWS::Serverless::HttpApi
@@ -76,21 +108,19 @@ Resources:
       CorsConfiguration:
         AllowMethods:
           - GET
-        AllowOrigins:
-          - !Ref Client
       Auth:
         Authorizers:
-          JWTAuthorizer:
+          JWTCognito:
             AuthorizationScopes:
-              - email
+              - Phone
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              issuer: !GetAtt AuthStack.Outputs.Issuer
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
               audience:
-                - !GetAtt AuthStack.Outputs.UserPoolClientId
-        DefaultAuthorizer: JWTAuthorizer
+                - !Ref UserPoolClient
+        DefaultAuthorizer: JWTCognito
 
 Outputs:
   WebEndpoint:
-    Description: "API Gateway endpoint URL for Prod stage"
+    Description: "API Gateway endpoint URL for Prod stage."
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

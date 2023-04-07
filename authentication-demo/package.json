@@ -4,9 +4,8 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.188.0",
-    "@aws-sdk/lib-dynamodb": "^3.188.0",
-    "aws-sdk": "^2.1352.0"
+    "aws-sdk": "^2.1352.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "aws-sdk-client-mock": "^2.0.0",
@@ -14,8 +13,12 @@
   },
   "scripts": {
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
-    "dev_create_user": "nodemon -w \"src/handles/create-user.*, events/event-create-user.json\" --exec \"sam build && sam local invoke --debug \\\"createUserFunction\\\" -e events/event-create-user.json\"",
-    "dev_get_user": "nodemon -w \"src/handles/get-user.*, events/event-get-user.json\" --exec \"sam build && sam local invoke --debug \\\"getUserFunction\\\" -e events/event-get-user.json\""
+    "deploy": "sam deploy",
+    "cloud_dev": "sam sync --watch --stack-name authentication-demo --region eu-central-1",
+    "logs": "sam logs --stack-name authentication-demo --region eu-central-1 --tail --include-traces",
+    "local_dev_create_user": "nodemon -w \"src/handles/create-user.*, events/event-create-user.json\" --exec \"sam build -u && sam local invoke --debug \\\"createUserFunction\\\" -e events/event-create-user.json\"",
+    "local_dev_get_user": "nodemon -w \"src/handles/get-user.*, events/event-get-user.json\" --exec \"sam build && sam local invoke --debug \\\"getUserFunction\\\" -e events/event-get-user.json\"",
+    "cloud_dev_create_user": "sam sync --code --region eu-central-1 --resource-id createUserFunction"
   },
   "nodemonConfig": {
     "ignore": [
