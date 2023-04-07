@@ -3,7 +3,7 @@ phases:
   install:
     commands:
       # Install all dependencies (including dependencies for running tests)
-      - npm install
+      - npm install --omit dev
   pre_build:
     commands:
       # Discover and run unit tests in the '__tests__' directory

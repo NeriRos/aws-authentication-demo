@@ -31,12 +31,12 @@ export const getUserHandler = async (event) => {
         return response;
 
     } catch (err) {
-        console.log("Error", err);
+        console.log("Error", err.toString());
 
         const response = {
             statusCode: 500,
             body: JSON.stringify({
-                message: `Error getting user: ${err.stack}`
+                message: `Error getting user: ${err.stack.toString()}`
             })
         };
     }

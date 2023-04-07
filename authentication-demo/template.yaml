@@ -101,7 +101,7 @@ Resources:
         Type: String
       TableName: "Users"
 
-  AppApi:
+  AuthApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       Description: Connect Cognito to HTTP API
