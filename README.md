@@ -12,14 +12,6 @@ Building an authentication app
 - AWS SAM (IaC)
 - NodeJS (Runtime)
 
-## Development
-
-Running the create user endpoint
-
-```bash
-sam build && sam local invoke createUserFunction -e events/event-create-user.json
-```
-
 ## The test
 
 This test is designed to evaluate your proficiency in API gateway and AWS Lambda. Feel free to use
