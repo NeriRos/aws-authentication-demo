@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "aws-sdk": "^2.1352.0",
+    "jwt-decode": "^3.1.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
@@ -14,11 +15,12 @@
   "scripts": {
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "deploy": "sam deploy",
-    "cloud_dev": "sam sync --watch --stack-name authentication-demo --region eu-central-1",
+    "cloud_dev": "sam sync --no-watch --stack-name authentication-demo --region eu-central-1",
     "logs": "sam logs --stack-name authentication-demo --region eu-central-1 --tail --include-traces",
     "local_dev_create_user": "nodemon -w \"src/handles/create-user.*, events/event-create-user.json\" --exec \"sam build -u && sam local invoke --debug \\\"createUserFunction\\\" -e events/event-create-user.json\"",
     "local_dev_get_user": "nodemon -w \"src/handles/get-user.*, events/event-get-user.json\" --exec \"sam build && sam local invoke --debug \\\"getUserFunction\\\" -e events/event-get-user.json\"",
-    "cloud_dev_create_user": "sam sync --code --region eu-central-1 --resource-id createUserFunction"
+    "sync_create_user": "sam sync --code --region eu-central-1 --resource-id createUserFunction --no-watch",
+    "sync_login_user": "sam sync --code --region eu-central-1 --resource-id loginUserFunction --no-watch"
   },
   "nodemonConfig": {
     "ignore": [

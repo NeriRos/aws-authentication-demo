@@ -1,14 +1,14 @@
 import AWS from 'aws-sdk';
 
-const dynamo = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.USERS_TABLE;
 
 export const getUserHandler = async (event) => {
     if (event.httpMethod !== 'GET') {
         throw new Error(`getMethod only accept GET method, you tried: ${event.httpMethod}`);
     }
-    // All log statements are written to CloudWatch
+
     console.info('received get user event');
+    const dynamo = new AWS.DynamoDB.DocumentClient();
 
     const id = event.pathParameters.id;
 
@@ -23,7 +23,7 @@ export const getUserHandler = async (event) => {
 
         const response = {
             statusCode: 200,
-            body: JSON.stringify(item)
+            body: JSON.stringify({item, id})
         };
 
         // All log statements are written to CloudWatch
@@ -33,7 +33,7 @@ export const getUserHandler = async (event) => {
     } catch (err) {
         console.log("Error", err.toString());
 
-        const response = {
+        return {
             statusCode: 500,
             body: JSON.stringify({
                 message: `Error getting user: ${err.stack.toString()}`

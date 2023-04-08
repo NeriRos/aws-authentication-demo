@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 
 const tableName = process.env.USERS_TABLE;
-const userPoolId = process.env.USER_POOL_ID
 const userPoolClientId = process.env.CLIENT_POOL_ID
 
 const registerCognitoUser = async (user) => {
@@ -79,7 +78,6 @@ export const createUserHandler = async (event) => {
     try {
         const id = await createUserInDynamoDB(body);
         const cognitoResponse = await registerCognitoUser(body)
-        console.log("USERRERR COGG", JSON.stringify(cognitoResponse))
 
         const response = {
             statusCode: 201,

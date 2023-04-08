@@ -24,6 +24,8 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: 6
+      AutoVerifiedAttributes:
+        - email
 
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
@@ -46,6 +48,50 @@ Resources:
         - email
         - openid
         - profile
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+
+  createUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/create-user.createUserHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Description: Create user in the DynamoDB table and Cognito User pool.
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Environment:
+        Variables:
+          CLIENT_POOL_ID: !Ref UserPoolClient
+          USERS_TABLE: !Ref UsersTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: POST
+
+  loginUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/login-user.loginUserHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Description: Login with Cognito to receive a cookie with JWT.
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          CLIENT_POOL_ID: !Ref UserPoolClient
+          USERS_TABLE: !Ref UsersTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /user/login
+            Method: POST
 
   getUserFunction:
     Type: AWS::Serverless::Function
@@ -63,6 +109,7 @@ Resources:
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
+          CLIENT_POOL_ID: !Ref UserPoolClient
       Events:
         Api:
           Type: Api
@@ -70,28 +117,49 @@ Resources:
             Path: /user/{id+}
             Method: GET
 
-  createUserFunction:
+  updateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/create-user.createUserHandler
+      Handler: src/handlers/update-user.updateUserHandler
       Runtime: nodejs18.x
       Architectures:
         - x86_64
-      Description: Create user in the DynamoDB table.
+      Description: Update user in the DynamoDB table.
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
       Environment:
         Variables:
-          CLIENT_POOL_ID: !Ref UserPoolClient
           USER_POOL_ID: !Ref UserPool
           USERS_TABLE: !Ref UsersTable
       Events:
         Api:
-          Type: Api
+          Type: HttpApi
           Properties:
             Path: /user
-            Method: POST
+            ApiId: !Ref AuthApi
+            Method: PUT
+
+  AuthApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: Connect Cognito to HTTP API
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - PUT
+      Auth:
+        Authorizers:
+          JWTCognito:
+            IdentitySource: "$request.header.Authorization"
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+              audience:
+                - !Ref UserPoolClient
+        DefaultAuthorizer: JWTCognito
 
   UsersTable:
     Type: AWS::Serverless::SimpleTable
@@ -101,24 +169,11 @@ Resources:
         Type: String
       TableName: "Users"
 
-  AuthApi:
-    Type: AWS::Serverless::HttpApi
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
     Properties:
-      Description: Connect Cognito to HTTP API
-      CorsConfiguration:
-        AllowMethods:
-          - GET
-      Auth:
-        Authorizers:
-          JWTCognito:
-            AuthorizationScopes:
-              - Phone
-            IdentitySource: "$request.header.Authorization"
-            JwtConfiguration:
-              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
-              audience:
-                - !Ref UserPoolClient
-        DefaultAuthorizer: JWTCognito
+      LogGroupName: !Sub "/aws/http-api/${ServerlessRestApi}/access_log"
+      RetentionInDays: 30
 
 Outputs:
   WebEndpoint:

@@ -42,7 +42,7 @@ Follow the steps below:
     - If incorrect data is provided, return a 400 HTTP response.
     - If successful, return a 201 HTTP response along with the ID from DynamoDB.
     - Endpoint: POST /user
-3. Implement another Lambda function to handle user login. This function should verify the user's
+3. Implement another Lambda function to handle user loginUser. This function should verify the user's
    credentials against
    the user pool and return a JSON web token (JWT) if the credentials are valid.
 4. Create a Lambda function for processing authorized requests. This function should verify a valid
