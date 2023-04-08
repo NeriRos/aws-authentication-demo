@@ -1,6 +1,5 @@
 import AWS from 'aws-sdk';
 
-const tableName = process.env.USERS_TABLE;
 const userPoolClientId = process.env.CLIENT_POOL_ID
 
 const loginUser = async (user) => {
@@ -14,11 +13,23 @@ const loginUser = async (user) => {
     return cognito.initiateAuth(params).promise();
 }
 
-export const loginUserHandler = async (event) => {
+const verifyRequest = (event) => {
     if (event.httpMethod !== 'POST') {
-        throw new Error(`bad request`);
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `Bad request`
+            })
+        }
     }
-    // All log statements are written to CloudWatch
+}
+
+export const loginUserHandler = async (event) => {
+    const isRequestInvalid = verifyRequest(event);
+    if (isRequestInvalid) {
+        return isRequestInvalid;
+    }
+
     console.info('received login user event');
 
     const body = JSON.parse(event.body);

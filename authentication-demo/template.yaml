@@ -14,10 +14,21 @@ Parameters:
       - "true"
       - "false"
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        STAGE: Prod
+        JWT_ISSUER: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+        CLIENT_POOL_ID: !Ref UserPoolClient
+        USERS_TABLE: !Ref UsersTable
+        USER_POOL_ID: !Ref UserPool
+
 Conditions:
   UsePostman: !Equals [ !Ref Postman, "true" ]
 
 Resources:
+  # TODO: Separate auth to it's own stack
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
@@ -51,7 +62,7 @@ Resources:
       ExplicitAuthFlows:
         - USER_PASSWORD_AUTH
 
-  createUserFunction:
+  CreateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/create-user.createUserHandler
@@ -62,10 +73,6 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
-      Environment:
-        Variables:
-          CLIENT_POOL_ID: !Ref UserPoolClient
-          USERS_TABLE: !Ref UsersTable
       Events:
         Api:
           Type: Api
@@ -73,7 +80,7 @@ Resources:
             Path: /user
             Method: POST
 
-  loginUserFunction:
+  LoginUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/login-user.loginUserHandler
@@ -81,11 +88,6 @@ Resources:
       Architectures:
         - x86_64
       Description: Login with Cognito to receive a cookie with JWT.
-      Environment:
-        Variables:
-          USER_POOL_ID: !Ref UserPool
-          CLIENT_POOL_ID: !Ref UserPoolClient
-          USERS_TABLE: !Ref UsersTable
       Events:
         Api:
           Type: Api
@@ -93,7 +95,7 @@ Resources:
             Path: /user/login
             Method: POST
 
-  getUserFunction:
+  GetUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/get-user.getUserHandler
@@ -106,18 +108,15 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
-      Environment:
-        Variables:
-          USERS_TABLE: !Ref UsersTable
-          CLIENT_POOL_ID: !Ref UserPoolClient
       Events:
         Api:
           Type: Api
           Properties:
             Path: /user/{id+}
+            RestApiId: !Ref FunctionAuthApi
             Method: GET
 
-  updateUserFunction:
+  UpdateUserFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/update-user.updateUserHandler
@@ -128,17 +127,45 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
-      Environment:
-        Variables:
-          USER_POOL_ID: !Ref UserPool
-          USERS_TABLE: !Ref UsersTable
       Events:
         Api:
-          Type: HttpApi
+          Type: Api
           Properties:
             Path: /user
-            ApiId: !Ref AuthApi
+            RestApiId: !Ref FunctionAuthApi
             Method: PUT
+
+  UsersTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: national_id
+        Type: String
+      TableName: "Users"
+
+  AuthorizeUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/authorize-user.authorizeUserHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Description: Authorize user to access apis.
+
+  FunctionAuthApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Description: Manual authentication API
+      Auth:
+        DefaultAuthorizer: FunctionAuthorizer
+        Authorizers:
+          FunctionAuthorizer:
+            FunctionPayloadType: REQUEST
+            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
+            Identity:
+              Headers:
+                - Authorization
 
   AuthApi:
     Type: AWS::Serverless::HttpApi
@@ -161,14 +188,6 @@ Resources:
                 - !Ref UserPoolClient
         DefaultAuthorizer: JWTCognito
 
-  UsersTable:
-    Type: AWS::Serverless::SimpleTable
-    Properties:
-      PrimaryKey:
-        Name: national_id
-        Type: String
-      TableName: "Users"
-
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -177,5 +196,5 @@ Resources:
 
 Outputs:
   WebEndpoint:
-    Description: "API Gateway endpoint URL for Prod stage."
+    Description: "API Gateway endpoint URL for Prod stage"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
