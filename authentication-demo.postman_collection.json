@@ -1,0 +1,167 @@
+{
+	"info": {
+		"_postman_id": "8bc7c031-150f-454d-94c5-9907d7a98bb6",
+		"name": "Authentication Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17342985"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456789\",\n    \"national_id\": \"1234567891\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"protocol": "https",
+					"host": [
+						"m4mspjm5s2",
+						"execute-api",
+						"eu-central-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456781\",\n    \"national_id\": \"1234567890\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"protocol": "https",
+					"host": [
+						"m4mspjm5s2",
+						"execute-api",
+						"eu-central-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"national_id\": \"1234567891\",\n    \"password\": \"12345678\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user/login",
+					"protocol": "https",
+					"host": [
+						"m4mspjm5s2",
+						"execute-api",
+						"eu-central-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJraWQiOiIxSytcL2dyWFV0S1l4TEwwYmVza1NtRlhFaGZ3OEY0QjZCUmFXRUVJZlJZYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3MjEwZmUwYy0yYzExLTQwNDItOGQ5Mi1mNmNjMWJkZTgzOTAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV8zNFdtbjRCV04iLCJjbGllbnRfaWQiOiI1Nzk3anF2ZGQ3czIwaThlNm5taWIwZWswNSIsIm9yaWdpbl9qdGkiOiI5NTk3MjJmZC03ZTExLTRhZGUtYmU2Yy1iYzBiZDdiNGY2MWMiLCJldmVudF9pZCI6ImE4OTdlOWJjLTNkYmYtNDliNy1hZTA1LWViZDc0MmE2MGQ5OCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2ODA5ODY5NzYsImV4cCI6MTY4MDk5MDU3NSwiaWF0IjoxNjgwOTg2OTc2LCJqdGkiOiIzM2RiNzY0Ni05OTA2LTQ5OTUtYTU4MC1hMzkwNmQ1NzM0NzAiLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEifQ.iNmz7-y2YFBYNk4cQ08cNhKMVcm0nZB39bE26M-YFbKr0B2jWYVuHWzn_mNLwjQOWUhu8Tn_Nk09YW6HNfqFlUjItUxhM8wRD2BnRqK1M1Y-d5QgYnZGjmm4U8ZpAGCBZtHU19HzaPCb7h6bueVOPBxXettKfBAyKyyDlzNh3xZX01BAfYBaifvDIEvvImPJ4xmwQY7CU2qguvxG872j3fnX57mPUO6z88QB-o4rfthQI5drKG99pP__YNW8CBRc5_USFJRd7D2GOgOGQ-Z_16ClaNaFrm-w8Yza-6pwbC7sFXPTrZvkR0dkqC4EnZCLg_TR2g-ucHC4pY2ru2igMA",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user/1234567891",
+					"protocol": "https",
+					"host": [
+						"m4mspjm5s2",
+						"execute-api",
+						"eu-central-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"user",
+						"1234567891"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
