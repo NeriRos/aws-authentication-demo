@@ -1,0 +1,8 @@
+{
+  "path": "/user",
+  "httpMethod": "PUT",
+  "body": {
+    "national_id": "123456789",
+    "first_name": "Jane"
+  }
+}

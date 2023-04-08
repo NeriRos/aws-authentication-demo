@@ -1,0 +1,8 @@
+{
+  "path": "/user/login",
+  "httpMethod": "POST",
+  "body": {
+    "username": "123456789",
+    "password": "Jane"
+  }
+}
