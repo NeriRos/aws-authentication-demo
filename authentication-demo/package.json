@@ -15,6 +15,7 @@
   "scripts": {
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "deploy": "sam deploy",
+    "cloud_dev_auth": "sam sync --no-watch --stack-name authentication-demo-auth --region eu-central-1 -t auth.yaml",
     "cloud_dev": "sam sync --no-watch --stack-name authentication-demo --region eu-central-1",
     "logs": "sam logs --stack-name authentication-demo --region eu-central-1 --tail --include-traces",
     "sync_create_user": "sam sync --code --region eu-central-1 --resource-id CreateUserFunction --no-watch",

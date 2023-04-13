@@ -3,11 +3,11 @@ import AWS from 'aws-sdk';
 const tableName = process.env.USERS_TABLE;
 
 const verifyRequest = async (event) => {
-    if (event.httpMethod !== 'GET') {
+    if (!event.routeKey.startsWith('GET')) {
         return {
-            statusCode: 400,
+            statusCode: 501,
             body: JSON.stringify({
-                message: `Bad request`
+                message: `Route not implemented: ${event.routeKey}`
             })
         }
     }

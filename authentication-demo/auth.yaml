@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: serverless authentication stack for the app demo
+
+Parameters:
+  ClientDomain:
+    Type: String
+    Description: Domain allowed to use this UserPool
+    Default: "*"
+  Postman:
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+
+Conditions:
+  UsePostman: !Equals [ !Ref Postman, "true" ]
+
+Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+      AutoVerifiedAttributes:
+        - email
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      SupportedIdentityProviders:
+        - COGNITO
+      CallbackURLs:
+        - !Ref ClientDomain
+        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
+      LogoutURLs:
+        - !Ref ClientDomain
+        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+        - !If [ UsePostman, implicit, !Ref AWS::NoValue ] # Implicit is only used for testing with postman and should not be in production.
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - profile
+      ExplicitAuthFlows:
+        - USER_PASSWORD_AUTH
+
+  #  AuthorizeUserFunction:
+  #    Type: AWS::Serverless::Function
+  #    Properties:
+  #      Handler: src/handlers/authorize-user.authorizeUserHandler
+  #      Runtime: nodejs18.x
+  #      Architectures:
+  #        - x86_64
+  #      Description: Authorize user to access apis.
+
+  #  FunctionAuthApi:
+  #    Type: AWS::Serverless::Api
+  #    Properties:
+  #      StageName: Prod
+  #      Description: Manual authentication API
+  #      Auth:
+  #        DefaultAuthorizer: FunctionAuthorizer
+  #        Authorizers:
+  #          FunctionAuthorizer:
+  #            FunctionPayloadType: REQUEST
+  #            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
+  #            Identity:
+  #              Headers:
+  #                - Authorization
+
+Outputs:
+  Issuer:
+    Description: "JWT Issuer"
+    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+
+  UserPool:
+    Description: "User pool"
+    Value: !Ref UserPool
+
+  UserPoolClientId:
+    Description: "User pool client"
+    Value: !Ref UserPoolClient

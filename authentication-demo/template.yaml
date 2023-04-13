@@ -5,8 +5,8 @@ Description: serverless authentication app demo
 Parameters:
   ClientDomain:
     Type: String
-    Description: Domain allowed to use this UserPool
-    Default: "https://2zqblfwse0.execute-api.eu-central-1.amazonaws.com"
+    Description: Domain allowed to use the UserPool
+    Default: "*"
   Postman:
     Type: String
     Default: "true"
@@ -19,48 +19,19 @@ Globals:
     Environment:
       Variables:
         STAGE: Prod
-        JWT_ISSUER: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
-        CLIENT_POOL_ID: !Ref UserPoolClient
+        JWT_ISSUER: !GetAtt AuthStack.Outputs.Issuer
+        CLIENT_POOL_ID: !GetAtt AuthStack.Outputs.UserPoolClientId
         USERS_TABLE: !Ref UsersTable
-        USER_POOL_ID: !Ref UserPool
-
-Conditions:
-  UsePostman: !Equals [ !Ref Postman, "true" ]
+        USER_POOL_ID: !GetAtt AuthStack.Outputs.UserPool
 
 Resources:
-  # TODO: Separate auth to it's own stack
-  UserPool:
-    Type: AWS::Cognito::UserPool
+  AuthStack:
+    Type: AWS::Serverless::Application
     Properties:
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 6
-      AutoVerifiedAttributes:
-        - email
-
-  UserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      UserPoolId: !Ref UserPool
-      GenerateSecret: false
-      SupportedIdentityProviders:
-        - COGNITO
-      CallbackURLs:
-        - !Ref ClientDomain
-        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
-      LogoutURLs:
-        - !Ref ClientDomain
-        - !If [ UsePostman, https://oauth.pstmn.io/v1/callback, !Ref AWS::NoValue ]
-      AllowedOAuthFlowsUserPoolClient: true
-      AllowedOAuthFlows:
-        - code
-        - !If [ UsePostman, implicit, !Ref AWS::NoValue ] # Implicit is only used for testing with postman and should not be in production.
-      AllowedOAuthScopes:
-        - email
-        - openid
-        - profile
-      ExplicitAuthFlows:
-        - USER_PASSWORD_AUTH
+      Location: ./auth.yaml
+      Parameters:
+        ClientDomain: !Ref ClientDomain
+        Postman: !Ref Postman
 
   CreateUserFunction:
     Type: AWS::Serverless::Function
@@ -75,9 +46,10 @@ Resources:
             TableName: !Ref UsersTable
       Events:
         Api:
-          Type: Api
+          Type: HttpApi
           Properties:
             Path: /user
+            ApiId: !Ref OpenApi
             Method: POST
 
   LoginUserFunction:
@@ -90,9 +62,10 @@ Resources:
       Description: Login with Cognito to receive a cookie with JWT.
       Events:
         Api:
-          Type: Api
+          Type: HttpApi
           Properties:
             Path: /user/login
+            ApiId: !Ref OpenApi
             Method: POST
 
   GetUserFunction:
@@ -115,12 +88,8 @@ Resources:
             Path: /user/{id+}
             ApiId: !Ref AuthApi
             Method: GET
-  #        Api:
-  #          Type: Api
-  #          Properties:
-  #            Path: /user/{id+}
-  #            RestApiId: !Ref FunctionAuthApi
-  #            Method: GET
+            Auth:
+              Authorizer: JWTCognito
 
   UpdateUserFunction:
     Type: AWS::Serverless::Function
@@ -140,12 +109,6 @@ Resources:
             Path: /user
             ApiId: !Ref AuthApi
             Method: PUT
-  #        Api:
-  #          Type: Api
-  #          Properties:
-  #            Path: /user
-  #            RestApiId: !Ref FunctionAuthApi
-  #            Method: PUT
 
   UsersTable:
     Type: AWS::Serverless::SimpleTable
@@ -155,62 +118,41 @@ Resources:
         Type: String
       TableName: "Users"
 
-#  AuthorizeUserFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      Handler: src/handlers/authorize-user.authorizeUserHandler
-  #      Runtime: nodejs18.x
-  #      Architectures:
-  #        - x86_64
-  #      Description: Authorize user to access apis.
-
-  #  FunctionAuthApi:
-  #    Type: AWS::Serverless::Api
-  #    Properties:
-  #      StageName: Prod
-  #      Description: Manual authentication API
-  #      Auth:
-  #        DefaultAuthorizer: FunctionAuthorizer
-  #        Authorizers:
-  #          FunctionAuthorizer:
-  #            FunctionPayloadType: REQUEST
-  #            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
-  #            Identity:
-  #              Headers:
-  #                - Authorization
+  OpenApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: Open api
+      StageName: Prod
 
   AuthApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       Description: Connect Cognito to HTTP API
+      StageName: Prod
       Auth:
         Authorizers:
           JWTCognito:
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}/.well-known/jwks.json"
+              issuer: !GetAtt AuthStack.Outputs.Issuer
               audience:
-                - !Ref UserPoolClient
+                - !GetAtt AuthStack.Outputs.UserPoolClientId
         DefaultAuthorizer: JWTCognito
       CorsConfiguration:
         AllowMethods:
           - GET
           - PUT
-      AccessLogSettings:
-        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
-        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
-
-  ApiAccessLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/http-api/${ServerlessRestApi}/access_log"
-      RetentionInDays: 30
+#      AccessLogSettings:
+#        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+#        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
+#
+#  ApiAccessLogGroup:
+#    Type: AWS::Logs::LogGroup
+#    Properties:
+#      LogGroupName: !Sub "/aws/http-api/${ServerlessRestApi}/access_log"
+#      RetentionInDays: 30
 
 Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
-
-  JWTIssuer:
-    Description: "JWT Issuer"
-    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}/.well-known/jwks.json"
+    Value: !Sub "https://${OpenApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

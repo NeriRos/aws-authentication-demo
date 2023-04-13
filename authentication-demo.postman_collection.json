@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "8bc7c031-150f-454d-94c5-9907d7a98bb6",
+		"_postman_id": "b0c2f18e-9504-498e-9c39-d575948a50fe",
 		"name": "Authentication Demo",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "17342985"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -21,10 +20,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"raw": "https://avkdzgqk19.execute-api.eu-central-1.amazonaws.com/Prod/user",
 					"protocol": "https",
 					"host": [
-						"m4mspjm5s2",
+						"avkdzgqk19",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -45,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456781\",\n    \"national_id\": \"1234567890\",\n    \"password\": \"12345678\"\n}",
+					"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456781\",\n    \"national_id\": \"1234567891\",\n    \"password\": \"12345678\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -53,10 +52,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"raw": "https://ta95wjs8mf.execute-api.eu-central-1.amazonaws.com/Prod/user",
 					"protocol": "https",
 					"host": [
-						"m4mspjm5s2",
+						"ta95wjs8mf",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -85,10 +84,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user/login",
+					"raw": "https://avkdzgqk19.execute-api.eu-central-1.amazonaws.com/Prod/user/login",
 					"protocol": "https",
 					"host": [
-						"m4mspjm5s2",
+						"avkdzgqk19",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -107,18 +106,12 @@
 			"name": "Get User",
 			"request": {
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJraWQiOiIxSytcL2dyWFV0S1l4TEwwYmVza1NtRlhFaGZ3OEY0QjZCUmFXRUVJZlJZYz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3MjEwZmUwYy0yYzExLTQwNDItOGQ5Mi1mNmNjMWJkZTgzOTAiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV8zNFdtbjRCV04iLCJjbGllbnRfaWQiOiI1Nzk3anF2ZGQ3czIwaThlNm5taWIwZWswNSIsIm9yaWdpbl9qdGkiOiI5NTk3MjJmZC03ZTExLTRhZGUtYmU2Yy1iYzBiZDdiNGY2MWMiLCJldmVudF9pZCI6ImE4OTdlOWJjLTNkYmYtNDliNy1hZTA1LWViZDc0MmE2MGQ5OCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2ODA5ODY5NzYsImV4cCI6MTY4MDk5MDU3NSwiaWF0IjoxNjgwOTg2OTc2LCJqdGkiOiIzM2RiNzY0Ni05OTA2LTQ5OTUtYTU4MC1hMzkwNmQ1NzM0NzAiLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEifQ.iNmz7-y2YFBYNk4cQ08cNhKMVcm0nZB39bE26M-YFbKr0B2jWYVuHWzn_mNLwjQOWUhu8Tn_Nk09YW6HNfqFlUjItUxhM8wRD2BnRqK1M1Y-d5QgYnZGjmm4U8ZpAGCBZtHU19HzaPCb7h6bueVOPBxXettKfBAyKyyDlzNh3xZX01BAfYBaifvDIEvvImPJ4xmwQY7CU2qguvxG872j3fnX57mPUO6z88QB-o4rfthQI5drKG99pP__YNW8CBRc5_USFJRd7D2GOgOGQ-Z_16ClaNaFrm-w8Yza-6pwbC7sFXPTrZvkR0dkqC4EnZCLg_TR2g-ucHC4pY2ru2igMA",
-						"type": "text"
-					}
-				],
+				"header": [],
 				"url": {
-					"raw": "https://m4mspjm5s2.execute-api.eu-central-1.amazonaws.com/Prod/user/1234567891",
+					"raw": "https://ta95wjs8mf.execute-api.eu-central-1.amazonaws.com/Prod/user/1234567891",
 					"protocol": "https",
 					"host": [
-						"m4mspjm5s2",
+						"ta95wjs8mf",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -139,7 +132,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "",
+				"value": "eyJraWQiOiJBbFwvRDNxMzNJeitjZTVQdlJ4ZHhnN3Vjb2Y3dnNXUzBcL3U4N2dPSEhhelU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI1YTc3MTllOS05YzFiLTQ5NGMtYWFmYi1hNDNjNDIzYTUzZmQiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV9iaGk2Nk9DVmciLCJjbGllbnRfaWQiOiI0ZXUxZzVucm85dmxzMzlvbDFjOWpydmg2diIsIm9yaWdpbl9qdGkiOiIwNWQ5YzM0ZC0wZjA4LTQwMTQtODZkMy0wNWE1ZjBiYTVmNmYiLCJldmVudF9pZCI6ImI3YTRiZmUzLTc2MzAtNGU2My05ZjhlLWM4Mzg1NjY2MmU3YSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2ODE0MDc2MzYsImV4cCI6MTY4MTQxMTIzNiwiaWF0IjoxNjgxNDA3NjM2LCJqdGkiOiIyNDU2Y2IzNi1iMGI2LTRiYjUtYjlkYS0yYzhkYWUwZGIyNzMiLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEifQ.gZ5WGsH0e-flUmTbaYTwF4ppFlQXD6yBcpyfpEs5o_ngCeWkJLMVdk-vjNjthFBQ3RsMDzGPtHRKemEknYN1xk-JjVDqBBrgORAkC3MNIkIvMtnZzU2EnnHFSFrZ0BUZ34_LaByZEfcrEE4JnirGpSI4kNqsDf7ZqoEqb-4L_oquFRjwVUMIqo8Al23YUNxJB3562tmAE2PcLJrnE7i7T7tlWsQKBknoMRGslvHf4B0PbNwKdfMBbfzlTSvTySZLhCBBUwBmJZN5HH6uRaqPPKixjpfg1_4_E-AFi-3MrHd_SAx4IOEs6dk2GFPP9fKCoGE1K-lLk8JLCkSa16rnfg",
 				"type": "string"
 			}
 		]

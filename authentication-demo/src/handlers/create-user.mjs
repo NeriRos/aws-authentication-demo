@@ -40,11 +40,11 @@ const createUserInDynamoDB = async (user) => {
 }
 
 const verifyRequest = (event) => {
-    if (event.httpMethod !== 'POST') {
+    if (!event.routeKey.startsWith('POST')) {
         return {
-            statusCode: 400,
+            statusCode: 501,
             body: JSON.stringify({
-                message: `Bad request`
+                message: `Route not implemented: ${event.routeKey}`
             })
         }
     }
@@ -58,6 +58,15 @@ const verifyRequest = (event) => {
             statusCode: 400,
             body: JSON.stringify({
                 message: `Missing fields: ${missingFields.join(', ')}`
+            })
+        }
+    }
+
+    if (body.first_name.length > 20 || body.last_name.length > 20) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: `First name and last name must be less than 20 characters`
             })
         }
     }
@@ -103,3 +112,5 @@ export const createUserHandler = async (event) => {
         }
     }
 }
+
+

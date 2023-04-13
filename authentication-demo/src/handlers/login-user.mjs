@@ -14,11 +14,11 @@ const loginUser = async (user) => {
 }
 
 const verifyRequest = (event) => {
-    if (event.httpMethod !== 'POST') {
+    if (!event.routeKey.startsWith('POST')) {
         return {
-            statusCode: 400,
+            statusCode: 501,
             body: JSON.stringify({
-                message: `Bad request`
+                message: `Route not implemented: ${event.routeKey}`
             })
         }
     }
