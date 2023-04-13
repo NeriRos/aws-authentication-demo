@@ -109,12 +109,18 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
       Events:
-        Api:
-          Type: Api
+        HttpApi:
+          Type: HttpApi
           Properties:
             Path: /user/{id+}
-            RestApiId: !Ref FunctionAuthApi
+            ApiId: !Ref AuthApi
             Method: GET
+  #        Api:
+  #          Type: Api
+  #          Properties:
+  #            Path: /user/{id+}
+  #            RestApiId: !Ref FunctionAuthApi
+  #            Method: GET
 
   UpdateUserFunction:
     Type: AWS::Serverless::Function
@@ -128,12 +134,18 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref UsersTable
       Events:
-        Api:
-          Type: Api
+        HttpApi:
+          Type: HttpApi
           Properties:
             Path: /user
-            RestApiId: !Ref FunctionAuthApi
+            ApiId: !Ref AuthApi
             Method: PUT
+  #        Api:
+  #          Type: Api
+  #          Properties:
+  #            Path: /user
+  #            RestApiId: !Ref FunctionAuthApi
+  #            Method: PUT
 
   UsersTable:
     Type: AWS::Serverless::SimpleTable
@@ -143,50 +155,50 @@ Resources:
         Type: String
       TableName: "Users"
 
-  AuthorizeUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: src/handlers/authorize-user.authorizeUserHandler
-      Runtime: nodejs18.x
-      Architectures:
-        - x86_64
-      Description: Authorize user to access apis.
+#  AuthorizeUserFunction:
+  #    Type: AWS::Serverless::Function
+  #    Properties:
+  #      Handler: src/handlers/authorize-user.authorizeUserHandler
+  #      Runtime: nodejs18.x
+  #      Architectures:
+  #        - x86_64
+  #      Description: Authorize user to access apis.
 
-  FunctionAuthApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
-      Description: Manual authentication API
-      Auth:
-        DefaultAuthorizer: FunctionAuthorizer
-        Authorizers:
-          FunctionAuthorizer:
-            FunctionPayloadType: REQUEST
-            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
-            Identity:
-              Headers:
-                - Authorization
+  #  FunctionAuthApi:
+  #    Type: AWS::Serverless::Api
+  #    Properties:
+  #      StageName: Prod
+  #      Description: Manual authentication API
+  #      Auth:
+  #        DefaultAuthorizer: FunctionAuthorizer
+  #        Authorizers:
+  #          FunctionAuthorizer:
+  #            FunctionPayloadType: REQUEST
+  #            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
+  #            Identity:
+  #              Headers:
+  #                - Authorization
 
   AuthApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       Description: Connect Cognito to HTTP API
-      AccessLogSettings:
-        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
-        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
-      CorsConfiguration:
-        AllowMethods:
-          - GET
-          - PUT
       Auth:
         Authorizers:
           JWTCognito:
             IdentitySource: "$request.header.Authorization"
             JwtConfiguration:
-              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}/.well-known/jwks.json"
               audience:
                 - !Ref UserPoolClient
         DefaultAuthorizer: JWTCognito
+      CorsConfiguration:
+        AllowMethods:
+          - GET
+          - PUT
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
 
   ApiAccessLogGroup:
     Type: AWS::Logs::LogGroup
@@ -198,3 +210,7 @@ Outputs:
   WebEndpoint:
     Description: "API Gateway endpoint URL for Prod stage"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+
+  JWTIssuer:
+    Description: "JWT Issuer"
+    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}/.well-known/jwks.json"
