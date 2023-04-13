@@ -6,7 +6,7 @@ Parameters:
   ClientDomain:
     Type: String
     Description: Domain allowed to use the UserPool
-    Default: "*"
+    Default: https://localhost
   Postman:
     Type: String
     Default: "true"
@@ -142,17 +142,11 @@ Resources:
         AllowMethods:
           - GET
           - PUT
-#      AccessLogSettings:
-#        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
-#        Format: "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId"
-#
-#  ApiAccessLogGroup:
-#    Type: AWS::Logs::LogGroup
-#    Properties:
-#      LogGroupName: !Sub "/aws/http-api/${ServerlessRestApi}/access_log"
-#      RetentionInDays: 30
 
 Outputs:
   WebEndpoint:
-    Description: "API Gateway endpoint URL for Prod stage"
+    Description: "API Gateway endpoint URL for unauthenticated requests"
     Value: !Sub "https://${OpenApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  WebAuthEndpoint:
+    Description: "API Gateway endpoint URL for authenticated requests"
+    Value: !Sub "https://${AuthApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

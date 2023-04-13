@@ -19,7 +19,7 @@ confirm_changeset = true
 resolve_s3 = true
 s3_prefix = "authentication-demo"
 region = "eu-central-1"
-parameter_overrides = "Client=\"https://localhost:3000\" TestWithPostman=\"true\""
+parameter_overrides = "ClientDomain=\"https://localhost\" Postman=\"true\""
 image_repositories = []
 
 [default.package.parameters]

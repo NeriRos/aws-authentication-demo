@@ -6,7 +6,7 @@ Parameters:
   ClientDomain:
     Type: String
     Description: Domain allowed to use this UserPool
-    Default: "*"
+    Default: https://localhost
   Postman:
     Type: String
     Default: "true"
@@ -51,39 +51,15 @@ Resources:
       ExplicitAuthFlows:
         - USER_PASSWORD_AUTH
 
-  #  AuthorizeUserFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      Handler: src/handlers/authorize-user.authorizeUserHandler
-  #      Runtime: nodejs18.x
-  #      Architectures:
-  #        - x86_64
-  #      Description: Authorize user to access apis.
-
-  #  FunctionAuthApi:
-  #    Type: AWS::Serverless::Api
-  #    Properties:
-  #      StageName: Prod
-  #      Description: Manual authentication API
-  #      Auth:
-  #        DefaultAuthorizer: FunctionAuthorizer
-  #        Authorizers:
-  #          FunctionAuthorizer:
-  #            FunctionPayloadType: REQUEST
-  #            FunctionArn: !GetAtt AuthorizeUserFunction.Arn
-  #            Identity:
-  #              Headers:
-  #                - Authorization
-
 Outputs:
   Issuer:
     Description: "JWT Issuer"
     Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
 
   UserPool:
-    Description: "User pool"
+    Description: "User Pool"
     Value: !Ref UserPool
 
   UserPoolClientId:
-    Description: "User pool client"
+    Description: "User Pool Client ID"
     Value: !Ref UserPoolClient

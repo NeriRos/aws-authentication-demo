@@ -4,9 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "aws-jwt-verify": "^4.0.0",
-    "aws-sdk": "^2.1352.0",
-    "jsonwebtoken": "^9.0.0"
+    "aws-sdk": "^2.1352.0"
   },
   "devDependencies": {
     "aws-sdk-client-mock": "^2.0.0",
