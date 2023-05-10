@@ -9,7 +9,14 @@
 			"name": "Create User",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "default",
+						"disabled": true
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456789\",\n    \"national_id\": \"1234567891\",\n    \"password\": \"12345678\"\n}",
@@ -20,10 +27,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://avkdzgqk19.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"raw": "https://mc1qjoxaod.execute-api.eu-central-1.amazonaws.com/Prod/user",
 					"protocol": "https",
 					"host": [
-						"avkdzgqk19",
+						"mc1qjoxaod",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -44,7 +51,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123456781\",\n    \"national_id\": \"1234567891\",\n    \"password\": \"12345678\"\n}",
+					"raw": "{\n    \"first_name\": \"Jane!!!\",\n    \"last_name\": \"Doe\",\n    \"phone_number\": \"+972123123123\",\n    \"national_id\": \"1234567891\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -52,10 +59,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://ta95wjs8mf.execute-api.eu-central-1.amazonaws.com/Prod/user",
+					"raw": "https://l59g4gnum0.execute-api.eu-central-1.amazonaws.com/Prod/user",
 					"protocol": "https",
 					"host": [
-						"ta95wjs8mf",
+						"l59g4gnum0",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -84,10 +91,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://avkdzgqk19.execute-api.eu-central-1.amazonaws.com/Prod/user/login",
+					"raw": "https://mc1qjoxaod.execute-api.eu-central-1.amazonaws.com/Prod/user/login",
 					"protocol": "https",
 					"host": [
-						"avkdzgqk19",
+						"mc1qjoxaod",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -108,10 +115,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://ta95wjs8mf.execute-api.eu-central-1.amazonaws.com/Prod/user/1234567891",
+					"raw": "https://l59g4gnum0.execute-api.eu-central-1.amazonaws.com/Prod/user/1234567891",
 					"protocol": "https",
 					"host": [
-						"ta95wjs8mf",
+						"l59g4gnum0",
 						"execute-api",
 						"eu-central-1",
 						"amazonaws",
@@ -132,7 +139,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJraWQiOiJBbFwvRDNxMzNJeitjZTVQdlJ4ZHhnN3Vjb2Y3dnNXUzBcL3U4N2dPSEhhelU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI1YTc3MTllOS05YzFiLTQ5NGMtYWFmYi1hNDNjNDIzYTUzZmQiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV9iaGk2Nk9DVmciLCJjbGllbnRfaWQiOiI0ZXUxZzVucm85dmxzMzlvbDFjOWpydmg2diIsIm9yaWdpbl9qdGkiOiIwNWQ5YzM0ZC0wZjA4LTQwMTQtODZkMy0wNWE1ZjBiYTVmNmYiLCJldmVudF9pZCI6ImI3YTRiZmUzLTc2MzAtNGU2My05ZjhlLWM4Mzg1NjY2MmU3YSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2ODE0MDc2MzYsImV4cCI6MTY4MTQxMTIzNiwiaWF0IjoxNjgxNDA3NjM2LCJqdGkiOiIyNDU2Y2IzNi1iMGI2LTRiYjUtYjlkYS0yYzhkYWUwZGIyNzMiLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEifQ.gZ5WGsH0e-flUmTbaYTwF4ppFlQXD6yBcpyfpEs5o_ngCeWkJLMVdk-vjNjthFBQ3RsMDzGPtHRKemEknYN1xk-JjVDqBBrgORAkC3MNIkIvMtnZzU2EnnHFSFrZ0BUZ34_LaByZEfcrEE4JnirGpSI4kNqsDf7ZqoEqb-4L_oquFRjwVUMIqo8Al23YUNxJB3562tmAE2PcLJrnE7i7T7tlWsQKBknoMRGslvHf4B0PbNwKdfMBbfzlTSvTySZLhCBBUwBmJZN5HH6uRaqPPKixjpfg1_4_E-AFi-3MrHd_SAx4IOEs6dk2GFPP9fKCoGE1K-lLk8JLCkSa16rnfg",
+				"value": "eyJraWQiOiJWb2pzbVc3THBZNTJMbXE2NThad04wRFNxbnppUDExWXB0T3M0Y3NhK2RzPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI5ZjZmODYzYS0yNjMyLTRjNDgtODFjZi03NWExNDEzNDc5MGQiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV9sVWhGcGR4VWoiLCJjbGllbnRfaWQiOiI3dTZ1Z3ZtMWFpM2Q0bjc2ZThqNGxpMTlxaiIsIm9yaWdpbl9qdGkiOiIzZjg2MjEzZi0xYjU4LTRiYmYtYjI3MC1jMmUzMDMxZGY5OTYiLCJldmVudF9pZCI6IjViYjJiNDBjLTZmZjMtNDhiZS04NTA0LTI2ZTI5NDc3ZTUxMCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2ODE0MTYzNzksImV4cCI6MTY4MTQxOTk3OSwiaWF0IjoxNjgxNDE2Mzc5LCJqdGkiOiIxZmVlMjQ5Ny0xZjdkLTQ1YjItYmJmZS01ZTE5ODQxOTBkY2QiLCJ1c2VybmFtZSI6IjEyMzQ1Njc4OTEifQ.vzPnXc5HNgfy-q6Y22LrwA0E2Ts1QD4WKwX-GBQwMWX5kMsiwk96pBPMZRPaWd8BHdXMHl6HvWTh7XMzL3YNmA6kPOQn6l5Ozyv6WBPc6eNKZR3tWKusAxktXcnnnhdR9M6uh24ENXgjyPpc_sC45UrZdCzXc6iMNpGmEPUTqYfcU42lWN_eKWXtBqY57QA5Y2vf2S3VecjoHrUyZZlPemB4G87EmXRA5EXAKpl6nPu56Ah7_Tkce8lAKWnFBOG8E2ih-eloGxAAcsd2PyCrK2QlxJlXuI2syj2GC_Czdotr_0SXRmCl-RFqz_UvQEAbB1gZk6oVLicVsEK3qD2LzA",
 				"type": "string"
 			}
 		]
